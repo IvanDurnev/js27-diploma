@@ -8,15 +8,15 @@ class Vector {
 
 	plus(vector) {
 		if (vector instanceof Vector) {
-      return new Vector(this.x + vector.x, this.y + vector.y);
-    } else {
-      throw 'Можно прибавлять к вектору только вектор типа Vector';
-    }
+     		return new Vector(this.x + vector.x, this.y + vector.y);
+    	} else {
+    		throw 'Можно прибавлять к вектору только вектор типа Vector';
+    	}
 	};
 
-  times(number) {
-    return new Vector(this.x * number, this.y * number);
-  };
+  	times(number) {
+    	return new Vector(this.x * number, this.y * number);
+  	};
 }
 
 const start = new Vector(30, 50);
