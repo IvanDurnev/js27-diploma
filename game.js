@@ -11,7 +11,7 @@ class Vector {
 			return new Vector(this.x + vector.x, this.y + vector.y);
 		} else {
 			throw 'Можно прибавлять к вектору только вектор типа Vector';
-    	}
+		};
 	};
 
   	times(number) {
