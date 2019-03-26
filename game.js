@@ -64,21 +64,23 @@ class Actor {
         		return false;
 			} else {
 				if (
-                (
-					(this.left > other.left && this.left < other.right) || (this.right > other.left && this.right < other.right)
-					&& 
-					(this.top > other.top && this.top < other.bottom) || (this.bottom > other.top && this.bottom < other.bottom)
-				)
+					(
+						(this.left > other.left && this.left < other.right) || (this.right > other.left && this.right < other.right)
+						&& 
+						(this.top > other.top && this.top < other.bottom) || (this.bottom > other.top && this.bottom < other.bottom)
+					)
 					||
-				(
-					(other.left > this.left && other.left < this.right) || (other.right > this.left && other.right < this.right)
-					&& 
-					(other.top > this.top && other.top < this.bottom) || (other.bottom > this.top && other.bottom < this.bottom)
-				)
+					(
+						(other.left > this.left && other.left < this.right) || (other.right > this.left && other.right < this.right)
+						&& 
+						(other.top > this.top && other.top < this.bottom) || (other.bottom > this.top && other.bottom < this.bottom)
+					)
 					&&
-					((this.right !== other.left) && (this.bottom !== other.top) && (this.left !== other.right) && (this.top !== other.bottom)) 
+					(
+						(this.right !== other.left) && (this.bottom !== other.top) && (this.left !== other.right) && (this.top !== other.bottom)
+					) 
 				) {
-          			return true;
+					return true;
 				} else {
 					return false;
 				}
