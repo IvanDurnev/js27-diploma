@@ -79,6 +79,10 @@ class Actor {
 					(
 						(this.right !== other.left) && (this.bottom !== other.top) && (this.left !== other.right) && (this.top !== other.bottom)
 					) 
+					||
+					(
+						(this.left === other.left) && (this.top === other.top) && (this.right === other.right) && (this.bottom === other.bottom)
+					)
 				) {
 					return true;
 				} else {
@@ -89,4 +93,78 @@ class Actor {
       			throw Error('Передан не объект Actor');
 			}
 	};
+};
+
+class Level {
+  constructor(grid = [], actors = []) {
+	  this.grid = grid;
+	  this.height = grid.length;
+	  this.width = 0;
+	  this.grid.forEach(line => {line.length > this.width ? this.width = line.length : this.width = this.width});
+	  this.actors = actors;
+	  this.actors.forEach(actor => {actor.type === 'player' ? this.player = actor: undefined});
+	  this.status = null;
+	  this.finishDelay = 1;
+  };
+
+  isFinished() {
+    if (this.status !== null && this.finishDelay < 0) {
+      return true;
+    }
+    return false;
+  };
+
+  actorAt(actor) {
+    if (actor instanceof Actor) {
+      for (let obj of this.actors) {
+        if (obj.isIntersect(actor)) {
+          return obj;
+        }
+      };
+    } else {
+      throw Error('Передан не объект Actor');
+    }
+  };
+
+  obstacleAt(pos, size) {
+    if (pos instanceof Vector && size instanceof Vector) {
+      if (pos.x < 0 || pos.x + size.x < 0 || pos.x + size.x > this.width || pos.y < 0 || pos.y + size.y < 0) {
+        return 'wall';
+      } else if (pos.y + size.y > this.height) {
+        return 'lava';
+      } else {
+        return undefined;
+      };
+    } else {
+      throw Error('Переданный объект - не Vector');
+    };
+  };
+
+  removeActor(actor) {
+    this.actors.forEach(obj => {actor === obj ? this.actors.splice( obj.index,1) : obj = obj});
+  };
+
+  noMoreActors(type) {
+	  for (let obj of this.actors) {
+		  if (obj.type === type) {
+			  return false;
+		  }
+	  }
+	  return true;
+  };
+
+  playerTouched(type, actor) {
+    if (this.status === null) {
+      if (type === 'lava' || type === 'fireball') {
+        this.status = 'lost';
+      } else if (type === 'coin') {
+        this.removeActor(actor)
+        let coinCount = 0;
+        this.actors.forEach(obj => {obj.type === 'coin' ? coinCount++ : coinCount = coinCount});
+        if (coinCount === 0) {
+          this.status = 'won';
+        };
+      };
+    };
+  };
 };
