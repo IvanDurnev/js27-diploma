@@ -168,3 +168,70 @@ class Level {
     };
   };
 };
+
+class LevelParser {
+	constructor(actorsDict = {}) {
+		this.actorsDict = actorsDict;
+	};
+	
+	actorFromSymbol(actorSymbol) {
+		if (actorSymbol === undefined) {
+      		return undefined;
+		} 
+		let actorKeys = Object.getOwnPropertyNames(this.actorsDict);
+		if (actorKeys.length === 0) {return undefined;}
+		if (actorKeys.includes(actorSymbol)) {
+			return this.actorsDict[actorSymbol];
+		};
+		return undefined;
+	};
+	
+	obstacleFromSymbol(obstacleSymbol) {
+		if (obstacleSymbol === undefined) {return undefined};
+    	if (obstacleSymbol === 'x') {return 'wall'}
+    	else if (obstacleSymbol === '!') {return 'lava'}
+    	else {return undefined};
+	};
+	
+	createGrid(plan) {
+		let grid = [];
+    	if (plan.length === 0) {
+      		return [];
+    	};
+    	for (let line of plan) {
+      		let draftLineArray = line.split('');
+      		draftLineArray.forEach((obstacleSymbol, index) => {
+        		draftLineArray.splice(index, 1, this.obstacleFromSymbol(obstacleSymbol))
+        	});
+      	grid.push(draftLineArray);
+    	};
+    	return grid;
+  	};
+	
+	createActors(plan) {
+		this.actors = [];
+    	if (plan.length === 0) {
+      		return [];
+    	};
+    	plan.forEach((line, y) => {
+      		let draftLineArray = line.split('');
+      		draftLineArray.forEach((actorSymbol, x) => {
+        		if (this.actorFromSymbol(actorSymbol) !== undefined 
+					&& 
+					this.actorFromSymbol(actorSymbol) instanceof Function
+					&&
+					this.actorFromSymbol(actorSymbol) === Actor
+				   ) {
+          			this.actors.push(new (this.actorFromSymbol(actorSymbol))(new Vector(x,y)))
+				}
+			})
+		});
+		return this.actors;
+	};
+	
+	parse(plan) {
+		let grid = this.createGrid(plan);
+    	let actors = this.createActors(plan);
+    	return new Level(grid, actors);
+  }
+};
