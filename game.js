@@ -296,7 +296,7 @@ class Coin extends Actor {
 	constructor(pos = new Vector(0,0)) {
     	super();
     	this.pos.x = pos.x + 0.2;
-    	this.pos.y = pos.x + 0.1;
+    	this.pos.y = pos.y + 0.1;
 		this._startPos = new Vector(this.pos.x, this.pos.y);
     	this.size = new Vector(0.6, 0.6);
 		Object.defineProperty(this, 'type', {
@@ -327,4 +327,18 @@ class Coin extends Actor {
     	let nextPos = this.getNextPosition(time);
     	this.pos = new Vector(nextPos.x, nextPos.y);
 	};
+};
+
+class Player extends Actor {
+  constructor(pos = new Vector(0,0)) {
+    super();
+    this.pos.x = pos.x;
+    this.pos.y = pos.y - 0.5;
+    this.size = new Vector(0.8, 1.5);
+    this.speed = new Vector(0, 0);
+    Object.defineProperty(this, 'type', {
+      value: 'player',
+      writable: false
+    });
+  };
 };
