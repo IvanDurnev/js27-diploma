@@ -264,3 +264,25 @@ class Fireball extends Actor {
     	intersection !== undefined ? this.handleObstacle() : this.pos = thisInNextPos.pos;
   };
 };
+
+class HorizontalFireball extends Fireball {
+  constructor(pos = new Vector(0,0), size = new Vector(1,1)) {
+    super(pos, size);
+	this.speed = new Vector(2,0);
+    Object.defineProperty(this, 'type', {
+      value: 'fireball',
+      writable: false
+    });
+  };
+};
+
+class VerticalFireball extends Fireball {
+  constructor(pos = new Vector(0,0), size = new Vector(1,1)) {
+    super(pos, size);
+	  this.speed = new Vector(0,2);
+    Object.defineProperty(this, 'type', {
+      value: 'fireball',
+      writable: false
+    });
+  };
+};
