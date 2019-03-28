@@ -48,7 +48,8 @@ class Actor {
 				},
 				'type': {
 					value: 'actor',
-					writable: false
+					writable: false,
+					configurable: true
 				}
 			});
 		} else {
@@ -234,4 +235,32 @@ class LevelParser {
     	let actors = this.createActors(plan);
     	return new Level(grid, actors);
   }
+};
+
+class Fireball extends Actor {
+	constructor(pos = new Vector(0,0), speed = new Vector(0,0), size = new Vector(1,1)) {
+    	super(pos, size, speed);
+    	Object.defineProperty(this, 'type', {
+      	value: 'fireball',
+      	writable: false
+		});
+	};
+	
+	getNextPosition(time = 1) {
+    	let x = this.left + this.speed.x * time;
+    	let y = this.top + this.speed.y * time;
+    	return new Vector(x,y);
+  	};
+	
+	handleObstacle() {
+    	this.speed.x = this.speed.x * -1;
+    	this.speed.y = this.speed.y * -1;
+  	};
+	
+	act(time, level) {
+		let nextPos = this.getNextPosition(time);
+    	let thisInNextPos = new Fireball(nextPos, this.speed, this.size);
+    	let intersection = level.obstacleAt(nextPos, this.size);
+    	intersection !== undefined ? this.handleObstacle() : this.pos = thisInNextPos.pos;
+  };
 };
