@@ -269,20 +269,25 @@ class HorizontalFireball extends Fireball {
   constructor(pos = new Vector(0,0), size = new Vector(1,1)) {
     super(pos, size);
 	this.speed = new Vector(2,0);
-    Object.defineProperty(this, 'type', {
-      value: 'fireball',
-      writable: false
-    });
   };
 };
 
 class VerticalFireball extends Fireball {
   constructor(pos = new Vector(0,0), size = new Vector(1,1)) {
     super(pos, size);
-	  this.speed = new Vector(0,2);
-    Object.defineProperty(this, 'type', {
-      value: 'fireball',
-      writable: false
-    });
+	this.speed = new Vector(0,2);
   };
+};
+
+class FireRain extends Fireball {
+	constructor(pos = new Vector(0,0), size = new Vector(1,1)) {
+    super(pos, size);
+	this.speed = new Vector(0,3);
+    this.startPos = pos;
+	};
+	
+	handleObstacle() {
+		this.pos.x = this.startPos.x;
+		this.pos.y = this.startPos.y;
+	};
 };
