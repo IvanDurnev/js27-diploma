@@ -103,7 +103,7 @@ class Level {
 	  this.width = 0;
 	  this.grid.forEach(line => {line.length > this.width ? this.width = line.length : this.width = this.width});
 	  this.actors = actors;
-	  this.actors.forEach(actor => {actor.type === 'player' ? this.player = actor: undefined});
+	  this.actors.forEach(actor => {actor.type === 'player' ? this.player = new Player(actor.pos.x, actor.pos.y) : undefined});
 	  this.status = null;
 	  this.finishDelay = 1;
   };
@@ -210,29 +210,30 @@ class LevelParser {
   	};
 	
 	createActors(plan) {
-		this.actors = [];
-    	if (plan.length === 0) {
-      		return [];
-    	};
+    	if (plan === []) { return [];}
+    	const actors = [];
     	plan.forEach((line, y) => {
-      		let draftLineArray = line.split('');
-      		draftLineArray.forEach((actorSymbol, x) => {
-        		if (this.actorFromSymbol(actorSymbol) !== undefined 
+			line.split('').forEach((actorSymbol, x) => {
+				if (this.actorFromSymbol(actorSymbol) !== undefined 
 					&& 
 					this.actorFromSymbol(actorSymbol) instanceof Function
 					&&
-					this.actorFromSymbol(actorSymbol) === Actor
-				   ) {
-          			this.actors.push(new (this.actorFromSymbol(actorSymbol))(new Vector(x,y)))
+					(Actor.prototype === this.actorFromSymbol(actorSymbol).prototype
+					||
+					this.actorFromSymbol(actorSymbol).prototype instanceof Actor)
+					) {
+					actors.push(new (this.actorFromSymbol(actorSymbol))(new Vector(x,y)))
+					//console.log(actors)
 				}
-			})
-		});
-		return this.actors;
+				});
+			});
+		return actors;
 	};
 	
 	parse(plan) {
 		let grid = this.createGrid(plan);
     	let actors = this.createActors(plan);
+		console.log(actors)
     	return new Level(grid, actors);
   }
 };
