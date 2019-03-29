@@ -102,8 +102,9 @@ class Level {
 	  this.height = grid.length;
 	  this.width = 0;
 	  this.grid.forEach(line => {line.length > this.width ? this.width = line.length : this.width = this.width});
-	  this.actors = actors;
-	  this.actors.forEach(actor => {actor.type === 'player' ? this.player = new Player(actor.pos.x, actor.pos.y) : undefined});
+	  this.actors = [];
+	  actors.forEach(actor => this.actors.push(actor));
+	  this.actors.forEach(actor => actor.type === 'player' ? this.player = actor : this.player = this.player);
 	  this.status = null;
 	  this.finishDelay = 1;
   };
@@ -146,12 +147,10 @@ class Level {
   };
 
   noMoreActors(type) {
-	  for (let obj of this.actors) {
-		  if (obj.type === type) {
-			  return false;
-		  }
-	  }
-	  return true;
+	  let res = true;
+	  this.actors.length === 0 ? res = true : res = false;
+	  this.actors.forEach(actor => actor.type === type ? res = true : res = false)
+	  return res;
   };
 
   playerTouched(type, actor) {
@@ -233,7 +232,6 @@ class LevelParser {
 	parse(plan) {
 		let grid = this.createGrid(plan);
     	let actors = this.createActors(plan);
-		console.log(actors)
     	return new Level(grid, actors);
   }
 };
