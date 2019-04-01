@@ -97,38 +97,22 @@ class Level {
   };
 
   obstacleAt(pos, size) {
-    if (pos instanceof Vector && size instanceof Vector) {
-		let obstacle = undefined;
-		if (pos.y + size.y > this.height) {return 'lava'};
-		if (
-			pos.x < 0 //левый край объекта за началом уровня
-			||
-			pos.x + size.x < 0 //правый край объекта за началом уровня
-			||
-			pos.x > this.width //левый край объекта за концом уровня
-			||
-			pos.x + size.x > this.width //правый край объекта за концом уровня
-			||
-			pos.y < 0 //верхний край объекта выше уровня
-			||
-			pos.y + size.y < 0 //нижний край объекта выше уровня
-			||
-			this.grid[Math.round(pos.y)][Math.round(pos.x)] === 'wall' //округленные координаты объекта равны координатам стены
-		) {
-			obstacle = 'wall';
-		} else if (
-			pos.y > this.height //верхний край объекта ниже уровня
-			||
-			pos.y + size.y > this.height //нижний край объекта ниже уровня
-			||
-			this.grid[Math.round(pos.y)][Math.round(pos.x)] === 'lava' //округленные координаты объекта равны координатам лавы
-		) {
-			obstacle = 'lava';
-		};
-		return obstacle;
-	} else {
-		throw Error('Переданный объект - не Vector');
-	};
+	  if (!(pos instanceof Vector && size instanceof Vector)) {
+		  throw Error('Переданный объект - не Vector');
+	  };
+	  if (pos.x < 0 || pos.x > this.width || pos.x + size.x < 0 || pos.x + size.x > this.width || pos.y < 0 || pos.y + size.y < 0) {
+		  return 'wall';
+	  }
+	  if (pos.y > this.width || pos.y + size.y > this.width) {
+		  return 'lava';
+	  }
+	  let actor = new Actor(new Vector(Math.round(pos.x), Math.round(pos.y)), new Vector(Math.round(size.x), Math.round(size.y)));
+	  return this.grid[actor.pos.y].find((obj,x) => {
+		  let objActor = new Actor(new Vector(x,actor.pos.y), new Vector(1,1));
+		  if (objActor.isIntersect(actor)) {
+			  return this.grid[objActor.pos.x, objActor.pos.y];
+		  }
+	  });
   };
 
   removeActor(actor) {
