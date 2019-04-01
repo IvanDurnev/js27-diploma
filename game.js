@@ -45,12 +45,7 @@ class Actor {
 					get: function(){
 					return this.pos.y + this.size.y
 					}
-				},
-//				'type': {
-//					value: 'actor',
-//					writable: false,
-//					configurable: true
-//				}
+				}
 			});
 		} else {
 			throw Error();
@@ -64,39 +59,13 @@ class Actor {
 	act() {};
 
 	isIntersect(other) {
-    	if (other instanceof Actor) {
-      		if (other === this) {
-        		return false;
-			} else {
-				if (
-					(
-						(this.left > other.left && this.left < other.right) || (this.right > other.left && this.right < other.right)
-						&& 
-						(this.top > other.top && this.top < other.bottom) || (this.bottom > other.top && this.bottom < other.bottom)
-					)
-					||
-					(
-						(other.left > this.left && other.left < this.right) || (other.right > this.left && other.right < this.right)
-						&& 
-						(other.top > this.top && other.top < this.bottom) || (other.bottom > this.top && other.bottom < this.bottom)
-					)
-					&&
-					(
-						(this.right !== other.left) && (this.bottom !== other.top) && (this.left !== other.right) && (this.top !== other.bottom)
-					) 
-					||
-					(
-						(this.left === other.left) && (this.top === other.top) && (this.right === other.right) && (this.bottom === other.bottom)
-					)
-				) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		} else {
-      			throw Error('Передан не объект Actor');
-			}
+    	if (!(other instanceof Actor)) {
+			throw Error('Передан не объект Actor');
+		};
+		if (other === this || other.left >= this.right || other.top >= this.bottom || other.right <= this.left || other.bottom <= this.top) {
+			return false;
+		};
+		return true;
 	};
 };
 
@@ -121,20 +90,14 @@ class Level {
   };
 
   actorAt(actor) {
-    if (actor instanceof Actor) {
-      for (let obj of this.actors) {
-        if (obj.isIntersect(actor)) {
-          return obj;
-        }
-      };
-    } else {
-      throw Error('Передан не объект Actor');
-    }
+	  if (!(actor instanceof Actor)) {
+		  throw Error('Передан не объект Actor');
+	  };
+	  return this.actors.find(obj => obj.isIntersect(actor));
   };
 
   obstacleAt(pos, size) {
     if (pos instanceof Vector && size instanceof Vector) {
-		//console.log(this.grid[Math.round(pos.y)][Math.round(pos.x)]=== 'wall' )
 		let obstacle = undefined;
 		if (pos.y + size.y > this.height) {return 'lava'};
 		if (
@@ -262,10 +225,6 @@ class LevelParser {
 class Fireball extends Actor {
 	constructor(pos = new Vector(0,0), speed = new Vector(0,0), size = new Vector(1,1)) {
     	super(pos, size, speed);
-//    	Object.defineProperty(this, 'type', {
-//      	value: 'fireball',
-//      	writable: false
-//		});
 	};
 	
 	get type() {
@@ -325,10 +284,6 @@ class Coin extends Actor {
     	this.pos.y = pos.y + 0.1;
 		this._startPos = new Vector(this.pos.x, this.pos.y);
     	this.size = new Vector(0.6, 0.6);
-//		Object.defineProperty(this, 'type', {
-//		  value: 'coin',
-//		  writable: false
-//		});
 		this.springSpeed = 8;
 		this.springDist = 0.07;
 		this.spring = Math.random()*2*Math.PI;
@@ -366,10 +321,6 @@ class Player extends Actor {
     	this.pos.y = pos.y - 0.5;
     	this.size = new Vector(0.8, 1.5);
     	this.speed = new Vector(0, 0);
-//    	Object.defineProperty(this, 'type', {
-//      		value: 'player',
-//      		writable: false
-//		});
 	};
 	get type() {
 		return 'player';
