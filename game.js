@@ -46,16 +46,20 @@ class Actor {
 					return this.pos.y + this.size.y
 					}
 				},
-				'type': {
-					value: 'actor',
-					writable: false,
-					configurable: true
-				}
+//				'type': {
+//					value: 'actor',
+//					writable: false,
+//					configurable: true
+//				}
 			});
 		} else {
 			throw Error();
 		}
   	};
+	
+	get type() {
+		return 'actor';
+	};
 
 	act() {};
 
@@ -104,11 +108,7 @@ class Level {
 	  this.grid.forEach(line => {line.length > this.width ? this.width = line.length : this.width = this.width});
 	  this.actors = [];
 	  actors.forEach(actor => this.actors.push(actor));
-	  //this.actors.forEach(actor => actor.type === 'player' ? this.player = actor : this.player = this.player);
-	  function isPlayer(actor) {
-		  actor.type === 'player' ? true : false;
-	  }
-	  this.player = this.actors.find(isPlayer);
+	  this.actors.forEach(actor => actor.type === 'player' ? this.player = actor : this.player = this.player);
 	  this.status = null;
 	  this.finishDelay = 1;
   };
@@ -169,14 +169,11 @@ class Level {
   };
 
   removeActor(actor) {
-    this.actors.forEach(obj => {actor === obj ? this.actors.splice( obj.index,1) : obj = obj});
+	  this.actors.forEach(obj => {actor === obj ? this.actors.splice( obj.index,1) : obj = obj});
   };
 
   noMoreActors(type) {
-	  let res = true;
-	  this.actors.length === 0 ? res = true : res = false;
-	  this.actors.forEach(actor => actor.type === type ? res = true : res = false)
-	  return res;
+	  return !this.actors.find(actor => actor.type === type);
   };
 
   playerTouched(type, actor) {
@@ -265,10 +262,14 @@ class LevelParser {
 class Fireball extends Actor {
 	constructor(pos = new Vector(0,0), speed = new Vector(0,0), size = new Vector(1,1)) {
     	super(pos, size, speed);
-    	Object.defineProperty(this, 'type', {
-      	value: 'fireball',
-      	writable: false
-		});
+//    	Object.defineProperty(this, 'type', {
+//      	value: 'fireball',
+//      	writable: false
+//		});
+	};
+	
+	get type() {
+		return 'fireball';
 	};
 	
 	getNextPosition(time = 1) {
@@ -324,14 +325,18 @@ class Coin extends Actor {
     	this.pos.y = pos.y + 0.1;
 		this._startPos = new Vector(this.pos.x, this.pos.y);
     	this.size = new Vector(0.6, 0.6);
-		Object.defineProperty(this, 'type', {
-		  value: 'coin',
-		  writable: false
-		});
+//		Object.defineProperty(this, 'type', {
+//		  value: 'coin',
+//		  writable: false
+//		});
 		this.springSpeed = 8;
 		this.springDist = 0.07;
 		this.spring = Math.random()*2*Math.PI;
-  };
+	};
+	
+	get type() {
+		return 'coin';
+	};
 	
 	updateSpring(time = 1) {
 		this.spring += this.springSpeed * time;
@@ -355,15 +360,18 @@ class Coin extends Actor {
 };
 
 class Player extends Actor {
-  constructor(pos = new Vector(0,0)) {
-    super();
-    this.pos.x = pos.x;
-    this.pos.y = pos.y - 0.5;
-    this.size = new Vector(0.8, 1.5);
-    this.speed = new Vector(0, 0);
-    Object.defineProperty(this, 'type', {
-      value: 'player',
-      writable: false
-    });
-  };
+	constructor(pos = new Vector(0,0)) {
+    	super();
+    	this.pos.x = pos.x;
+    	this.pos.y = pos.y - 0.5;
+    	this.size = new Vector(0.8, 1.5);
+    	this.speed = new Vector(0, 0);
+//    	Object.defineProperty(this, 'type', {
+//      		value: 'player',
+//      		writable: false
+//		});
+	};
+	get type() {
+		return 'player';
+	};
 };
