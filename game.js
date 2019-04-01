@@ -104,7 +104,11 @@ class Level {
 	  this.grid.forEach(line => {line.length > this.width ? this.width = line.length : this.width = this.width});
 	  this.actors = [];
 	  actors.forEach(actor => this.actors.push(actor));
-	  this.actors.forEach(actor => actor.type === 'player' ? this.player = actor : this.player = this.player);
+	  //this.actors.forEach(actor => actor.type === 'player' ? this.player = actor : this.player = this.player);
+	  function isPlayer(actor) {
+		  actor.type === 'player' ? true : false;
+	  }
+	  this.player = this.actors.find(isPlayer);
 	  this.status = null;
 	  this.finishDelay = 1;
   };
@@ -130,16 +134,38 @@ class Level {
 
   obstacleAt(pos, size) {
     if (pos instanceof Vector && size instanceof Vector) {
-      if (pos.x < 0 || pos.x + size.x < 0 || pos.x + size.x > this.width || pos.y < 0 || pos.y + size.y < 0) {
-        return 'wall';
-      } else if (pos.y + size.y > this.height) {
-        return 'lava';
-      } else {
-        return undefined;
-      };
-    } else {
-      throw Error('Переданный объект - не Vector');
-    };
+		//console.log(this.grid[Math.round(pos.y)][Math.round(pos.x)]=== 'wall' )
+		let obstacle = undefined;
+		if (pos.y + size.y > this.height) {return 'lava'};
+		if (
+			pos.x < 0 //левый край объекта за началом уровня
+			||
+			pos.x + size.x < 0 //правый край объекта за началом уровня
+			||
+			pos.x > this.width //левый край объекта за концом уровня
+			||
+			pos.x + size.x > this.width //правый край объекта за концом уровня
+			||
+			pos.y < 0 //верхний край объекта выше уровня
+			||
+			pos.y + size.y < 0 //нижний край объекта выше уровня
+			||
+			this.grid[Math.round(pos.y)][Math.round(pos.x)] === 'wall' //округленные координаты объекта равны координатам стены
+		) {
+			obstacle = 'wall';
+		} else if (
+			pos.y > this.height //верхний край объекта ниже уровня
+			||
+			pos.y + size.y > this.height //нижний край объекта ниже уровня
+			||
+			this.grid[Math.round(pos.y)][Math.round(pos.x)] === 'lava' //округленные координаты объекта равны координатам лавы
+		) {
+			obstacle = 'lava';
+		};
+		return obstacle;
+	} else {
+		throw Error('Переданный объект - не Vector');
+	};
   };
 
   removeActor(actor) {
