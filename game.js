@@ -70,7 +70,7 @@ class Actor {
 };
 
 class Level {
-  constructor(grid = [], actors = []) {
+	constructor(grid = [], actors = []) {
 	  this.grid = grid;
 	  this.height = grid.length;
 	  this.width = 0;
@@ -80,63 +80,60 @@ class Level {
 	  this.actors.forEach(actor => actor.type === 'player' ? this.player = actor : this.player = this.player);
 	  this.status = null;
 	  this.finishDelay = 1;
-  };
-
-  isFinished() {
+	};
+	
+	isFinished() {
     if (this.status !== null && this.finishDelay < 0) {
       return true;
     }
     return false;
   };
-
-  actorAt(actor) {
+	
+	actorAt(actor) {
 	  if (!(actor instanceof Actor)) {
 		  throw Error('Передан не объект Actor');
 	  };
 	  return this.actors.find(obj => obj.isIntersect(actor));
-  };
-
-  obstacleAt(pos, size) {
-	  if (!(pos instanceof Vector && size instanceof Vector)) {
-		  throw Error('Переданный объект - не Vector');
-	  };
-	  if (pos.x < 0 || pos.x > this.width || pos.x + size.x < 0 || pos.x + size.x > this.width || pos.y < 0 || pos.y + size.y < 0) {
-		  return 'wall';
-	  }
-	  if (pos.y > this.width || pos.y + size.y > this.width) {
-		  return 'lava';
-	  }
-	  let actor = new Actor(new Vector(Math.round(pos.x), Math.round(pos.y)), new Vector(Math.round(size.x), Math.round(size.y)));
-	  return this.grid[actor.pos.y].find((obj,x) => {
-		  let objActor = new Actor(new Vector(x,actor.pos.y), new Vector(1,1));
-		  if (objActor.isIntersect(actor)) {
-			  return this.grid[objActor.pos.x, objActor.pos.y];
-		  }
-	  });
-  };
-
-  removeActor(actor) {
+	};
+	
+	obstacleAt(pos, size) {
+		if (!(pos instanceof Vector && size instanceof Vector)) {
+			throw Error('Переданный объект - не Vector');
+		};
+		if (pos.x < 0 || pos.x + size.x > this.width || pos.y < 0) {
+			return 'wall';
+		};
+		if (pos.y + size.y > this.height) {
+			return 'lava';
+		};
+		if (this.grid[Math.floor(pos.y)][Math.floor(pos.x)]) return this.grid[Math.floor(pos.y)][Math.floor(pos.x)];
+		if (this.grid[Math.floor(pos.y+size.y)][Math.floor(pos.x)] && pos.y+size.y>Math.floor(pos.y+size.y)) return this.grid[Math.floor(pos.y+size.y)][Math.floor(pos.x)];
+		
+		return undefined;
+	};
+	
+	removeActor(actor) {
 	  this.actors.forEach(obj => {actor === obj ? this.actors.splice( obj.index,1) : obj = obj});
   };
-
-  noMoreActors(type) {
+	
+	noMoreActors(type) {
 	  return !this.actors.find(actor => actor.type === type);
   };
-
-  playerTouched(type, actor) {
-    if (this.status === null) {
-      if (type === 'lava' || type === 'fireball') {
-        this.status = 'lost';
-      } else if (type === 'coin') {
-        this.removeActor(actor)
-        let coinCount = 0;
-        this.actors.forEach(obj => {obj.type === 'coin' ? coinCount++ : coinCount = coinCount});
-        if (coinCount === 0) {
-          this.status = 'won';
-        };
-      };
-    };
-  };
+	
+	playerTouched(type, actor) {
+		if (this.status === null) {
+			if (type === 'lava' || type === 'fireball') {
+				this.status = 'lost';
+			} else if (type === 'coin') {
+				this.removeActor(actor)
+				let coinCount = 0;
+				this.actors.forEach(obj => {obj.type === 'coin' ? coinCount++ : coinCount = coinCount});
+				if (coinCount === 0) {
+					this.status = 'won';
+				};
+			};
+		};
+	};
 };
 
 class LevelParser {
