@@ -124,7 +124,8 @@ class Level {
 		if (this.status === null) {
 			if (type === 'lava' || type === 'fireball') {
 				this.status = 'lost';
-			} else if (type === 'coin') {
+			};
+			if (type === 'coin') {
 				this.removeActor(actor)
 				let coinCount = 0;
 				this.actors.forEach(obj => {obj.type === 'coin' ? coinCount++ : coinCount = coinCount});
@@ -307,3 +308,16 @@ class Player extends Actor {
 		return 'player';
 	};
 };
+
+//run game
+const actorDict = {
+	'@': Player,
+	'o': Coin,
+	'=': HorizontalFireball,
+	'|': VerticalFireball,
+	'v': FireRain
+};
+const parser = new LevelParser(actorDict);
+loadLevels()
+	.then(result => (runGame(JSON.parse(result), parser, DOMDisplay)));
+
