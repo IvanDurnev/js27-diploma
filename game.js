@@ -106,15 +106,19 @@ class Level {
 		if (pos.y + size.y > this.height) {
 			return 'lava';
 		};
-		if (this.grid[Math.floor(pos.y)][Math.floor(pos.x)]) return this.grid[Math.floor(pos.y)][Math.floor(pos.x)];
-		if (this.grid[Math.floor(pos.y+size.y)][Math.floor(pos.x)] && pos.y+size.y>Math.floor(pos.y+size.y)) return this.grid[Math.floor(pos.y+size.y)][Math.floor(pos.x)];
-		
-		return undefined;
+		for (let i = Math.floor(pos.y); i < Math.ceil(pos.y + size.y); i++) {
+			for (let j = Math.floor(pos.x); j < Math.ceil(pos.x + size.x); j++) {
+				if (this.grid[i][j] !== undefined) {
+					return this.grid[i][j];
+				};
+			};
+		};
+			
 	};
 	
 	removeActor(actor) {
-	  this.actors.forEach(obj => {actor === obj ? this.actors.splice( obj.index,1) : obj = obj});
-  };
+		this.actors.forEach(obj => obj === actor ? this.actors.splice(this.actors.indexOf(actor),1) : obj = obj);
+	};
 	
 	noMoreActors(type) {
 	  return !this.actors.find(actor => actor.type === type);
@@ -125,17 +129,14 @@ class Level {
 			if (type === 'lava' || type === 'fireball') {
 				this.status = 'lost';
 			};
-			if (type === 'coin') {
+			if (type === 'coin' && actor.type === 'coin') {
 				this.removeActor(actor)
-				let coinCount = 0;
-				this.actors.forEach(obj => {obj.type === 'coin' ? coinCount++ : coinCount = coinCount});
-				if (coinCount === 0) {
-					this.status = 'won';
+				if (this.noMoreActors(type)) {
+					this.status = 'won'
 				};
 			};
 		};
-	};
-};
+	};};
 
 class LevelParser {
 	constructor(actorsDict = {}) {
