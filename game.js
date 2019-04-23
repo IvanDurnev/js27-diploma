@@ -242,8 +242,8 @@ class FireRain extends Fireball {
 };
 
 class Coin extends Actor {
-    constructor(pos = new Vector(0, 0)) {
-        super();
+    constructor(pos, size, speed) {
+        super(pos, size, speed);
         this.pos.x = pos.x + 0.2;
         this.pos.y = pos.y + 0.1;
         this._startPos = new Vector(this.pos.x, this.pos.y);
@@ -279,8 +279,8 @@ class Coin extends Actor {
 };
 
 class Player extends Actor {
-    constructor(pos = new Vector(0, 0)) {
-        super();
+    constructor(pos, size, speed) {
+        super(pos, size, speed);
         this.pos.x = pos.x;
         this.pos.y = pos.y - 0.5;
         this.size = new Vector(0.8, 1.5);
